@@ -1,43 +1,49 @@
-from flask import Flask, request, jsonify, render_template
+import json
 from utils.get_info import get_info_inegi
 from database.sqlite import insert_data, filter_data 
-import json
-
-
+from flask_swagger_ui import get_swaggerui_blueprint
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
-    
+SWAGGER_URL="/swagger"
+API_URL="/static/swagger.json"
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': 'Access API'
+    }
+)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
+ 
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
+
 
 @app.route('/tabla', methods=['GET', 'POST'])
 def index_tabla():
     tipo_establecimiento = request.args.get("tipo_establecimiento")
     coordenadas = request.args.get("coordenadas")
     radio = request.args.get("radio")
-    
-    # Imprimir para depuración
-    print(tipo_establecimiento, radio, coordenadas)
-    
     datos = get_info_inegi(tipo_establecimiento, coordenadas, radio)
     
-    # Crear el JSON para la plantilla
     json_data = {
         "tipo_establecimiento": tipo_establecimiento,
         "coordenadas": coordenadas,
         "radio": radio
     }
     
-    json_data = json.dumps(json_data)  # Convertir a JSON para la plantilla
+    json_data = json.dumps(json_data) 
     
-    # Si la solicitud pide JSON, responder con datos en formato JSON
     if request.args.get("json"):
         return jsonify(datos)
     
-    # Renderizar la plantilla con los datos JSON
     return render_template('table.html', json_data=json_data)
+
 
 @app.route('/buscar_establecimientos', methods=['POST'])
 def buscar_establecimientos():
@@ -75,7 +81,6 @@ def search_data_api():
     resultados = filter_data(palabra_clave)
     return jsonify(resultados), 200
     
-
 
 if __name__ == '__main__':
     app.app_context().push()

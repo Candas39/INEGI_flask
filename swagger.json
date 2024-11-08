@@ -1,0 +1,158 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Access API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "description": "Display the main index page, were you insert the data: Tipo de Establecimiento, Coordenadas and Radio of incidence, and 'send' boton to obtain /tabla",
+        "produces": ["text/html"],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/tabla": {
+      "get": {
+        "description": "Generates a paginated table with establishments within the radius and coordinates as center",
+        "parameters": [
+          {
+            "name": "tipo_establecimiento",
+            "in": "query",
+            "description": "Type of establishment",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "coordenadas",
+            "in": "query",
+            "description": "Coordinates in the format 'lat,long'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "radio",
+            "in": "query",
+            "description": "Radius of incidence",
+            "required": true,
+            "type": "number",
+            "format": "float"
+          },
+          {
+            "name": "json",
+            "in": "query",
+            "description": "Return results as JSON if true",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        }
+      },
+      "post": {
+        "description": "Generates a paginated table with establishments within the radius and coordinates as center",
+        "parameters": [
+          {
+            "name": "AccessData",
+            "in": "body",
+            "description": "JSON data for the API",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AccessData"
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "User granted access"
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        }
+      }
+    },
+    "/buscar_establecimientos": {
+      "post": {
+        "description": "Search establishments by type, coordinates, and radius",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "Data to search establishments",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AccessData"
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        }
+      }
+    },
+    "/insert_data": {
+      "post": {
+        "description": "Insert data into the database",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "Data to insert",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AccessData"
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AccessData": {
+      "type": "object",
+      "properties": {
+        "tipo_establecimiento": {
+          "type": "string"
+        },
+        "coordenadas": {
+          "type": "string"
+        },
+        "radio": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    }
+  }
+}
